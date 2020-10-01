@@ -12,6 +12,7 @@ namespace ShouldBeLike
         static readonly Lazy<IComparison> defaultTestingComparison = new Lazy<IComparison>(() => DefaultTestingComparisonBuilder.Create());
 
         public static readonly TestingComparisonBuilder DefaultTestingComparisonBuilder = new TestingComparisonBuilder();
+        public static IComparison DefaultTestingComparison => defaultTestingComparison.Value;
         
         public static void ShouldBeLike<T>(this T actual, T expected) => actual.ShouldBeLike(expected, defaultTestingComparison.Value);
         public static void ShouldBeLike<T>(this IEnumerable<T> actual, params T[] expected) => ShouldBeLike(actual, expected.AsEnumerable());
