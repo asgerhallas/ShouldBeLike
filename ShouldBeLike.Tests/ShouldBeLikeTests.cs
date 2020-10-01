@@ -1,3 +1,4 @@
+using DeepEqual;
 using DeepEqual.Syntax;
 using Xunit;
 
@@ -6,137 +7,42 @@ namespace ShouldBeLike.Tests
     public class ShouldBeLikeTests
     {
         [Fact]
-        public void TupleShouldBeLike()
-        {
-            (1, "hello", 2m, new object()).ShouldBeLike((1, "hello", 2m, new object()));
-        }
-
-        [Fact]
-        public void TupleFails()
-        {
-            Assert.Throws<DeepEqualException>(() =>
-                ("hello", "world").ShouldBeLike(("Not hello", "world")));
-        }
-
-        [Fact]
-        public void ObjectShouldBeLike()
+        public void Object()
         {
             new object().ShouldBeLike(new object());
         }
- 
-        [Fact]
-        public void Cycles()
-        {
-            new SelfCycling().ShouldBeLike(new SelfCycling());
-        }
 
         [Fact]
-        public void Cycles_Null()
+        public void OtherObject()
         {
             Assert.Throws<DeepEqualException>(() =>
-                new SelfCycling().ShouldBeLike(new SelfCycling { Self = null }));
+                new object().ShouldBeLike(new Blah()));
         }
 
-        [Fact]
-        public void Cycles_OtherParent()
-        {
-            new SelfCycling().ShouldBeLike(new SelfCycling { Self = new SelfCycling() });
-        }
+        public class Blah { }
 
         [Fact]
-        public void Cycles_OtherObject()
+        public void ShouldFail()
         {
             Assert.Throws<DeepEqualException>(() =>
-                new SelfCycling().ShouldBeLike(new SelfCycling { Self = new object() }));
+                ((object)new Foo(12)).ShouldBeLike(42));
         }
 
         [Fact]
-        public void Cycles_Tuples()
+        public void ConvertInconclusiveToFail_IfTypesAreDifferent()
         {
-            (1, "hello", 2m, new SelfCycling()).ShouldBeLike((1, "hello", 2m, new SelfCycling()));
-        }
-
-        [Fact]
-        public void Cycles_Multiple()
-        {
-            var parent = new Parent();
-            parent.Child = new Child(parent);
+            // if types are the same it will throw and prompt to add a new Comparison to deal with this type.
             
-            var parent2 = new Parent();
-            parent2.Child = new Child(parent2);
+            var (result, context) = new TestingComparisonBuilder().Create().Compare(new ComparisonContext(), new Foo(12), 42);
 
-            parent.ShouldBeLike(parent2);
+            Assert.Equal(ComparisonResult.Fail, result);
         }
 
-        [Fact]
-        public void Cycles_Multiple_TupleDownTheChain()
+        public class Foo
         {
-            var parent = new Parent();
-            parent.Child = new Child(parent) { Tuple = (1, "asger") };
-            
-            var parent2 = new Parent();
-            parent2.Child = new Child(parent2) { Tuple = (1, "asger") };
+            public int Value { get; }
 
-            parent.ShouldBeLike(parent2);
-        }
-
-        [Fact]
-        public void Cycles_Multiple_TupleDownTheChain_NotLike()
-        {
-            var parent = new Parent();
-            parent.Child = new Child(parent) { Tuple = (1, "asger") };
-            
-            var parent2 = new Parent();
-            parent2.Child = new Child(parent2) { Tuple = (1, "peter") };
-
-            Assert.Throws<DeepEqualException>(() =>
-                parent.ShouldBeLike(parent2));
-        }
-
-        [Fact]
-        public void Cycles_Multiple_TupleDownTheChain_WithNewCycles()
-        {
-            var parent = new Parent();
-            parent.Child = new Child(parent) { Tuple = (1, new Child(parent)) };
-            
-            var parent2 = new Parent();
-            parent2.Child = new Child(parent2) { Tuple = (1, new Child(parent2)) };
-
-            parent.ShouldBeLike(parent2);
-        }
-        
-        [Fact]
-        public void Cycles_Multiple_TupleDownTheChain_WithNewCycles_NotLike()
-        {
-            var parent = new Parent();
-            parent.Child = new Child(parent) { Tuple = (1, new Child(parent) { Tuple = (1, 2) } ) };
-            
-            var parent2 = new Parent();
-            parent2.Child = new Child(parent2) { Tuple = (1, new Child(parent2) { Tuple = (3, 4) }) };
-
-            Assert.Throws<DeepEqualException>(() =>
-                parent.ShouldBeLike(parent2));
-        }
-
-        
-        public class SelfCycling
-        {
-            public SelfCycling() => Self = this;
-
-            public object Self { get; set; }
-        }
-
-        public class Parent
-        {
-            public object Child { get; set; }
-        }
-
-        public class Child
-        {
-            public Child(object parent) => Parent = this;
-
-            public object Parent { get; set; }
-            public (int, object) Tuple { get; set; }
+            public Foo(int value) => Value = value;
         }
     }
 }

@@ -7,7 +7,9 @@ namespace ShouldBeLike
         public TestingComparisonBuilder()
         {
             WithCustomComparison(new CyclesComparison(Root));
+            WithCustomComparison(new FailOnInconclusiveComparison(Root));
             WithCustomComparison(new StructuralEquatableComparison(Root));
+            WithCustomComparison(new ObjectObjectComparion());
         }
     }
 }

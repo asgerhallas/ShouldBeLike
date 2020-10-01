@@ -21,7 +21,10 @@ namespace ShouldBeLike
         {
             var (comparisonResult, context) = comparison.Compare(new ComparisonContext(), actual, expected);
 
-            if (comparisonResult != ComparisonResult.Fail) return;
+            if (comparisonResult == ComparisonResult.Inconclusive) 
+                throw new InvalidOperationException("Result was inconclusive. This should have been dealt with by the FailOnInconclusiveComparison, but strangely wasn't.");
+
+            if (comparisonResult == ComparisonResult.Pass) return;
 
             throw new DeepEqualException(
                 new DeepEqualExceptionMessageBuilder(
