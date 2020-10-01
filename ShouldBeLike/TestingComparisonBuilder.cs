@@ -6,6 +6,7 @@ namespace ShouldBeLike
     {
         public TestingComparisonBuilder()
         {
+            WithCustomComparison(new CyclicComparison(Root));
             WithCustomComparison(new StructuralEquatableComparison(Root));
         }
     }
