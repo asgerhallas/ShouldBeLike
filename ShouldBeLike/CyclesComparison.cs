@@ -6,12 +6,12 @@ using DeepEqual;
 
 namespace ShouldBeLike
 {
-    public class CyclicComparison : IComparison
+    public class CyclesComparison : IComparison
     {
         readonly CompositeComparison root;
         readonly HashSet<(object, object)> left = new HashSet<(object, object)>();
 
-        public CyclicComparison(CompositeComparison root) => this.root = root;
+        public CyclesComparison(CompositeComparison root) => this.root = root;
 
         public bool CanCompare(Type type1, Type type2) => true;
 
