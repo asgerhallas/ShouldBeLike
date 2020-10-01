@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <DefineConstants>NEWTONSOFT</DefineConstants>
+    <DefineConstants>TRACE;NEWTONSOFT</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
