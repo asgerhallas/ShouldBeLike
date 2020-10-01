@@ -11,4 +11,8 @@
     <PackageReference Include="DeepEqual" Version="2.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="JTokenComparison.cs" Pack="True" PackageCopyToOutput="True" />
+  </ItemGroup>
+
 </Project>
