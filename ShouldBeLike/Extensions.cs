@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using DeepEqual;
 using DeepEqual.Formatting;
 using DeepEqual.Syntax;
@@ -9,9 +10,10 @@ namespace ShouldBeLike
 {
     public static class Extensions
     {
-        static readonly Lazy<IComparison> defaultTestingComparison = new Lazy<IComparison>(() => DefaultTestingComparisonBuilder.Create());
+        static readonly Lazy<IComparison> defaultTestingComparison = new Lazy<IComparison>(() => DefaultTestingComparisonBuilder.Create(), true);
 
         public static readonly TestingComparisonBuilder DefaultTestingComparisonBuilder = new TestingComparisonBuilder();
+
         public static IComparison DefaultTestingComparison => defaultTestingComparison.Value;
         
         public static void ShouldBeLike<T>(this T actual, T expected) => actual.ShouldBeLike(expected, defaultTestingComparison.Value);
