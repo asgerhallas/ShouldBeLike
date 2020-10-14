@@ -10,9 +10,32 @@ namespace ShouldBeLike
 {
     public static class Extensions
     {
-        static readonly Lazy<IComparison> defaultTestingComparison = new Lazy<IComparison>(() => DefaultTestingComparisonBuilder.Create(), true);
+        static readonly Lazy<IComparison> defaultTestingComparison = new Lazy<IComparison>(() => CreateTestingComparisonBuilder().Create(), true);
 
-        public static readonly TestingComparisonBuilder DefaultTestingComparisonBuilder = new TestingComparisonBuilder();
+        static Action<TestingComparisonBuilder> setup = builder => { };
+
+        public static Action<TestingComparisonBuilder> Setup
+        {
+            get => setup;
+            set 
+            {
+                if (defaultTestingComparison.IsValueCreated)
+                {
+                    throw new InvalidOperationException("Cannot change setup after comparison has been used.");
+                }
+
+                setup = value; 
+            }
+        }
+
+        public static TestingComparisonBuilder CreateTestingComparisonBuilder()
+        {
+            var builder = new TestingComparisonBuilder();
+
+            Setup(builder);
+
+            return builder;
+        }
 
         public static IComparison DefaultTestingComparison => defaultTestingComparison.Value;
         
@@ -30,7 +53,7 @@ namespace ShouldBeLike
 
             throw new DeepEqualException(
                 new DeepEqualExceptionMessageBuilder(
-                    context, DefaultTestingComparisonBuilder.GetFormatterFactory()
+                    context, CreateTestingComparisonBuilder().GetFormatterFactory()
                 ).GetMessage(), context);
         }
 

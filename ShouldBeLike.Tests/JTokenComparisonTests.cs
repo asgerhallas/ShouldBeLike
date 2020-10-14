@@ -1,3 +1,4 @@
+using DeepEqual;
 using DeepEqual.Syntax;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -6,9 +7,13 @@ namespace ShouldBeLike.Tests
 {
     public class JTokenComparisonTests
     {
+        readonly CompositeComparison comparison;
+
         public JTokenComparisonTests()
         {
-            Extensions.DefaultTestingComparisonBuilder.WithCustomComparison(new JTokenComparison());
+            comparison = Extensions.CreateTestingComparisonBuilder()
+                .WithCustomComparison(new JTokenComparison())
+                .Create();
         }
 
         [Fact]
@@ -20,7 +25,7 @@ namespace ShouldBeLike.Tests
             }.ShouldBeLike(new JObject
             {
                 ["name"] = "Andreas"
-            });
+            }, comparison);
         }
 
         [Fact]
@@ -33,7 +38,7 @@ namespace ShouldBeLike.Tests
                 }.ShouldBeLike(new JObject
                 {
                     ["lastname"] = "Andreas"
-                }));
+                }, comparison));
         }
 
     }
