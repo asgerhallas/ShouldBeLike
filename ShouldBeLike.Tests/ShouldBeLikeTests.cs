@@ -19,6 +19,12 @@ namespace ShouldBeLike.Tests
                 new object().ShouldBeLike(new Blah()));
         }
 
+        [Fact]
+        public void EmptyObject()
+        {
+            new Blah().ShouldBeLike(new Blah());
+        }
+
         public class Blah { }
 
         [Fact]
