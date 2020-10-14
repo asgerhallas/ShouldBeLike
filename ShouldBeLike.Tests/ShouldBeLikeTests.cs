@@ -25,7 +25,19 @@ namespace ShouldBeLike.Tests
             new Blah().ShouldBeLike(new Blah());
         }
 
+        [Fact]
+        public void EmptyObject_IgnoredProperty()
+        {
+            var comparison = Extensions.CreateTestingComparisonBuilder().IgnoreProperty<Blah2>(x => x.IgnoreMe).Create();
+
+            new Blah2().ShouldBeLike(new Blah2(), comparison);
+        }
+
         public class Blah { }
+        public class Blah2 
+        {
+            public string IgnoreMe { get; set; }
+        }
 
         [Fact]
         public void ShouldFail()

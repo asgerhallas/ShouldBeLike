@@ -9,7 +9,7 @@ namespace ShouldBeLike
             WithCustomComparison(new CyclesComparison(Root));
             WithCustomComparison(new FailOnInconclusiveComparison(Root));
             WithCustomComparison(new StructuralEquatableComparison(Root));
-            WithCustomComparison(new ObjectObjectComparion());
+            WithCustomComparison(new EmptyComplexObjectComparison(ComplexObjectComparison));
         }
     }
 }
