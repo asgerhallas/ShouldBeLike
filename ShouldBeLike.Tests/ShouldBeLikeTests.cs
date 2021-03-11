@@ -1,11 +1,22 @@
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using DeepEqual;
 using DeepEqual.Syntax;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ShouldBeLike.Tests
 {
     public class ShouldBeLikeTests
     {
+        readonly ITestOutputHelper output;
+
+        public ShouldBeLikeTests(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
+
         [Fact]
         public void Object()
         {
@@ -54,6 +65,24 @@ namespace ShouldBeLike.Tests
             var (result, context) = new TestingComparisonBuilder().Create().Compare(new ComparisonContext(), new Foo(12), 42);
 
             Assert.Equal(ComparisonResult.Fail, result);
+        }
+
+        [Fact]
+        public void Bug_SetupToFail()
+        {
+            // A bug in the cycles detector: one failing assertions made other assertions false positive.
+            // This could be seen in concurrent test runs, as it was also not thread safe
+
+            var abc = new[] { "a", "b", "c" };
+            try
+            {
+                abc.ShouldBeLike("b", "a", "c");
+            }
+            catch (Exception e)
+            {
+            }
+
+            Assert.Throws<DeepEqualException>(() => abc.ShouldBeLike("b", "a", "c"));
         }
 
         public class Foo

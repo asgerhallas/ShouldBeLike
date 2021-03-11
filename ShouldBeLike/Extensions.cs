@@ -10,18 +10,16 @@ namespace ShouldBeLike
 {
     public static class Extensions
     {
-        static readonly Lazy<IComparison> defaultTestingComparison = new Lazy<IComparison>(() => CreateTestingComparisonBuilder().Create(), true);
-
-        static Action<TestingComparisonBuilder> setup = builder => { };
+        static Action<TestingComparisonBuilder> setup;
 
         public static Action<TestingComparisonBuilder> Setup
         {
             get => setup;
             set 
             {
-                if (defaultTestingComparison.IsValueCreated)
+                if (setup != null)
                 {
-                    throw new InvalidOperationException("Cannot change setup after comparison has been used.");
+                    throw new InvalidOperationException("Cannot change setup more than once. Set it up statically.");
                 }
 
                 setup = value; 
@@ -32,14 +30,12 @@ namespace ShouldBeLike
         {
             var builder = new TestingComparisonBuilder();
 
-            Setup(builder);
+            Setup?.Invoke(builder);
 
             return builder;
         }
 
-        public static IComparison DefaultTestingComparison => defaultTestingComparison.Value;
-        
-        public static void ShouldBeLike<T>(this T actual, T expected) => actual.ShouldBeLike(expected, defaultTestingComparison.Value);
+        public static void ShouldBeLike<T>(this T actual, T expected) => actual.ShouldBeLike(expected, CreateTestingComparisonBuilder().Create());
         public static void ShouldBeLike<T>(this IEnumerable<T> actual, params T[] expected) => ShouldBeLike(actual, expected.AsEnumerable());
 
         public static void ShouldBeLike<T>(this T actual, T expected, IComparison comparison)
@@ -125,7 +121,7 @@ List did not contain these expected elements:
 
         public class DeepEqualComparer<T> : IEqualityComparer<T>
         {
-            public bool Equals(T x, T y) => x.IsDeepEqual(y, defaultTestingComparison.Value);
+            public bool Equals(T x, T y) => x.IsDeepEqual(y, CreateTestingComparisonBuilder().Create());
             public int GetHashCode(T obj) => obj.GetHashCode();
         }
     }
