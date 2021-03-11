@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Collections.Immutable;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using DeepEqual;
 
@@ -8,6 +9,7 @@ namespace ShouldBeLike
     public class CyclesComparison : IComparison
     {
         readonly CompositeComparison root;
+        readonly HashSet<(object, object)> left = new HashSet<(object, object)>();
 
         public CyclesComparison(CompositeComparison root) => this.root = root;
 
@@ -15,45 +17,11 @@ namespace ShouldBeLike
 
         public (ComparisonResult result, IComparisonContext context) Compare(IComparisonContext context, object value1, object value2)
         {
-            var stopper = new CycleStopper(value1, value2);
-
-            if (context.Differences.Contains(stopper))
-            {
-                return (ComparisonResult.Pass, context);
-            }
+            if (!left.Add((value1, value2))) return (ComparisonResult.Pass, context);
 
             var rest = new CompositeComparison(root.Comparisons.SkipUntil(this).Skip(1));
 
-            var (result, resultContext) = rest.Compare(context.AddDifference(stopper), value1, value2);
-
-            return (
-                result,
-                new ComparisonContext(
-                    resultContext.Differences
-                        .Except(new[] {stopper})
-                        .ToImmutableList(),
-                    resultContext.Breadcrumb)
-            );
-        }
-
-        class CycleStopper : Difference
-        {
-            readonly (object, object) values;
-
-            public CycleStopper(object value1, object value2) : base(null) => values = (value1, value2);
-
-            bool Equals(CycleStopper other) => Equals(values, other.values);
-
-            public override bool Equals(object obj)
-            {
-                if (ReferenceEquals(null, obj)) return false;
-                if (ReferenceEquals(this, obj)) return true;
-                if (obj.GetType() != GetType()) return false;
-
-                return Equals((CycleStopper) obj);
-            }
-
-            public override int GetHashCode() => values.GetHashCode();
+            return rest.Compare(context, value1, value2);
         }
     }
 }
