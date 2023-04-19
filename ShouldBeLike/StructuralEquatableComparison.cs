@@ -38,7 +38,7 @@ namespace ShouldBeLike
 
             public IReadOnlyList<ComparisonResult> Results => results;
 
-            public bool Equals(object x, object y)
+            bool IEqualityComparer.Equals(object x, object y)
             {
                 var result = comparison.Compare(context, x, y);
                 results.Add(result.result);

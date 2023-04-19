@@ -5,14 +5,23 @@
     <Authors>Asger Hallas</Authors>
     <Description>Shouldly like tool for asserting likeness based on James Fosters' DeepEqual library.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <LangVersion>latest</LangVersion>
+	<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="DeepEqual" Version="2.0.0" />
+    <!--<PackageReference Include="DeepEqual" Version="4.2.1" />-->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.5.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="JTokenComparison.cs" Pack="True" PackageCopyToOutput="True" />
+    <Compile Remove="SourceGenerator\JTokenComparison.cs" />
+    <EmbeddedResource Include="SourceGenerator\JTokenComparison.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+	<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" /> 
+  </ItemGroup>
 </Project>

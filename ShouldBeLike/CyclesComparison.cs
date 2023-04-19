@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DeepEqual;
@@ -9,7 +8,7 @@ namespace ShouldBeLike
     public class CyclesComparison : IComparison
     {
         readonly CompositeComparison root;
-        readonly HashSet<(object, object)> left = new HashSet<(object, object)>();
+        readonly HashSet<(object, object)> left = new();
 
         public CyclesComparison(CompositeComparison root) => this.root = root;
 

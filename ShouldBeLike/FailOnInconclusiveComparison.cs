@@ -22,7 +22,7 @@ namespace ShouldBeLike
             
             if (value1.GetType() != value2.GetType()) return (ComparisonResult.Fail, context);
 
-            throw new InvalidOperationException("Comparison came up inconclusive. ");
+            throw new InvalidOperationException("Comparison came up inconclusive.");
         }
     }
 }

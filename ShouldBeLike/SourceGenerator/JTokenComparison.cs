@@ -1,13 +1,12 @@
-﻿#if NEWTONSOFT
-using System;
-using DeepEqual;
-using Newtonsoft.Json.Linq;
-using ComparisonResult = DeepEqual.ComparisonResult;
-using IComparison = DeepEqual.IComparison;
-using IComparisonContext = DeepEqual.IComparisonContext;
-
-namespace ShouldBeLike
+﻿namespace ShouldBeLike
 {
+    using System;
+    using DeepEqual;
+    using Newtonsoft.Json.Linq;
+    using ComparisonResult = DeepEqual.ComparisonResult;
+    using IComparison = DeepEqual.IComparison;
+    using IComparisonContext = DeepEqual.IComparisonContext;
+
     public class JTokenComparison : IComparison
     {
         public bool CanCompare(Type type1, Type type2) => typeof(JToken).IsAssignableFrom(type1) && type1 == type2;
@@ -23,4 +22,3 @@ namespace ShouldBeLike
         }
     }
 }
-#endif

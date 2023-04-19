@@ -31,6 +31,17 @@ namespace ShouldBeLike.Tests
         }
 
         [Fact]
+        public void ComparingObjectsWithNoProperties_DifferentType_DefaultBehavior()
+        {
+            var comparer = (IComparison)new ComparisonBuilder().Create();
+            var context = new ComparisonContext();
+
+            Assert.Equal(
+                ComparisonResult.Inconclusive, 
+                comparer.Compare(context, new object(), new Blah()).result);
+        }
+
+        [Fact]
         public void EmptyObject()
         {
             new Blah().ShouldBeLike(new Blah());
@@ -46,6 +57,10 @@ namespace ShouldBeLike.Tests
 
         public class Blah { }
         public class Blah2 
+        {
+            public string IgnoreMe { get; set; }
+        }
+        public class Blah3
         {
             public string IgnoreMe { get; set; }
         }

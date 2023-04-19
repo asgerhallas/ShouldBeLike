@@ -11,9 +11,7 @@ namespace ShouldBeLike.Tests
 
         public JTokenComparisonTests()
         {
-            comparison = Extensions.CreateTestingComparisonBuilder()
-                .WithCustomComparison(new JTokenComparison())
-                .Create();
+            comparison = Extensions.CreateTestingComparisonBuilder().Create();
         }
 
         [Fact]
