@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using DeepEqual;
 
 namespace ShouldBeLike
 {
-    public class TestingComparisonBuilder : ComparisonBuilder
+    public static class TestingComparisonBuilder
     {
         static readonly List<Type> optionalComparisonTypes = new();
 
@@ -23,16 +24,23 @@ namespace ShouldBeLike
             }
         }
 
-        public TestingComparisonBuilder()
+        public static void Setup(ComparisonBuilder builder)
         {
-            WithCustomComparison(new CyclesComparison(Root));
-            WithCustomComparison(new FailOnInconclusiveComparison(Root));
-            WithCustomComparison(new StructuralEquatableComparison(Root));
-            WithCustomComparison(new EmptyComplexObjectComparison(ComplexObjectComparison));
+            builder.IgnoreCircularReferences();
+
+            var allComparisons = (CompositeComparison)builder.GetType()
+                .GetProperty("AllComparisons", BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetValue(builder);
+
+            builder.WithCustomComparison(new FailOnDifferentTypes());
+            //Builder.WithCustomComparison(new CyclesComparison(allComparisons));
+            builder.WithCustomComparison(new FailOnInconclusiveComparison(allComparisons));
+            builder.WithCustomComparison(new StructuralEquatableComparison(allComparisons));
+            builder.WithCustomComparison(new EmptyComplexObjectComparison(builder.ComplexObjectComparison));
 
             foreach (var optionalComparisonType in optionalComparisonTypes)
             {
-                WithCustomComparison((IComparison)Activator.CreateInstance(optionalComparisonType));
+                builder.WithCustomComparison((IComparison)Activator.CreateInstance(optionalComparisonType));
             }
         }
     }

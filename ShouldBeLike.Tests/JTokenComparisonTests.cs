@@ -7,16 +7,10 @@ namespace ShouldBeLike.Tests
 {
     public class JTokenComparisonTests
     {
-        readonly CompositeComparison comparison;
-
-        public JTokenComparisonTests()
-        {
-            comparison = Extensions.CreateTestingComparisonBuilder().Create();
-        }
+        readonly IComparison comparison = ShouldBeLikeExtensions.CreateTestingComparison();
 
         [Fact]
-        public void JObjectShouldBeLike()
-        {
+        public void JObjectShouldBeLike() =>
             new JObject
             {
                 ["name"] = "Andreas"
@@ -24,11 +18,9 @@ namespace ShouldBeLike.Tests
             {
                 ["name"] = "Andreas"
             }, comparison);
-        }
 
         [Fact]
-        public void DifferentJObjectFails()
-        {
+        public void DifferentJObjectFails() =>
             Assert.Throws<DeepEqualException>(() =>
                 new JObject
                 {
@@ -37,7 +29,5 @@ namespace ShouldBeLike.Tests
                 {
                     ["lastname"] = "Andreas"
                 }, comparison));
-        }
-
     }
 }

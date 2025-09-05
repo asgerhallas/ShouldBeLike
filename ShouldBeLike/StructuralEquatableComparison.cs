@@ -6,12 +6,8 @@ using DeepEqual;
 
 namespace ShouldBeLike
 {
-    public class StructuralEquatableComparison : IComparison
+    public class StructuralEquatableComparison(IComparison root) : IComparison
     {
-        readonly IComparison root;
-
-        public StructuralEquatableComparison(IComparison root) => this.root = root;
-
         public bool CanCompare(Type type1, Type type2) =>
             typeof(IStructuralEquatable).IsAssignableFrom(type1) && type1 == type2;
 
@@ -24,17 +20,9 @@ namespace ShouldBeLike
             return (comparer.Results.Concat(new[] {ComparisonResult.Inconclusive}).Max(), context);
         }
 
-        class Comparer : IEqualityComparer
+        class Comparer(IComparison comparison, IComparisonContext context) : IEqualityComparer
         {
-            readonly IComparison comparison;
-            readonly IComparisonContext context;
-            readonly List<ComparisonResult> results = new List<ComparisonResult>();
-
-            public Comparer(IComparison comparison, IComparisonContext context)
-            {
-                this.comparison = comparison;
-                this.context = context;
-            }
+            readonly List<ComparisonResult> results = new();
 
             public IReadOnlyList<ComparisonResult> Results => results;
 

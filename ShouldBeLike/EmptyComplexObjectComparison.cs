@@ -4,13 +4,8 @@ using DeepEqual;
 
 namespace ShouldBeLike
 {
-    public class EmptyComplexObjectComparison : IComparison
+    public class EmptyComplexObjectComparison(ComplexObjectComparison complexObjectComparison) : IComparison
     {
-        readonly ComplexObjectComparison complexObjectComparison;
-
-        public EmptyComplexObjectComparison(ComplexObjectComparison complexObjectComparison) => 
-            this.complexObjectComparison = complexObjectComparison;
-
         public bool CanCompare(Type type1, Type type2) => type1.IsClass && type1 == type2;
 
         public (ComparisonResult result, IComparisonContext context) Compare(IComparisonContext context, object value1, object value2)

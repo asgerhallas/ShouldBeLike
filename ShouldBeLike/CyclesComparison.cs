@@ -5,12 +5,9 @@ using DeepEqual;
 
 namespace ShouldBeLike
 {
-    public class CyclesComparison : IComparison
+    public class CyclesComparison(CompositeComparison root) : IComparison
     {
-        readonly CompositeComparison root;
         readonly HashSet<(object, object)> left = new();
-
-        public CyclesComparison(CompositeComparison root) => this.root = root;
 
         public bool CanCompare(Type type1, Type type2) => true;
 

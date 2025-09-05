@@ -7,11 +7,11 @@ using DeepEqual.Syntax;
 
 namespace ShouldBeLike
 {
-    public static class Extensions
+    public static class ShouldBeLikeExtensions
     {
-        static Action<TestingComparisonBuilder> setup;
+        static Action<ComparisonBuilder> setup;
 
-        public static Action<TestingComparisonBuilder> Setup
+        public static Action<ComparisonBuilder> Setup
         {
             get => setup;
             set 
@@ -25,16 +25,21 @@ namespace ShouldBeLike
             }
         }
 
-        public static TestingComparisonBuilder CreateTestingComparisonBuilder()
+        public static ComparisonBuilder CreateTestingComparisonBuilder()
         {
-            var builder = new TestingComparisonBuilder();
+            var builder = new ComparisonBuilder();
+
+            TestingComparisonBuilder.Setup(builder);
 
             Setup?.Invoke(builder);
 
             return builder;
         }
 
-        public static void ShouldBeLike<T>(this T actual, T expected) => actual.ShouldBeLike(expected, CreateTestingComparisonBuilder().Create());
+        public static IComparison CreateTestingComparison() => CreateTestingComparisonBuilder().Create();
+
+        public static void ShouldBeLike<T>(this T actual, T expected) => actual.ShouldBeLike(expected, CreateTestingComparison());
+
         public static void ShouldBeLike<T>(this IEnumerable<T> actual, params T[] expected) => ShouldBeLike(actual, expected.AsEnumerable());
 
         public static void ShouldBeLike<T>(this T actual, T expected, IComparison comparison)
@@ -48,7 +53,7 @@ namespace ShouldBeLike
 
             throw new DeepEqualException(
                 new DeepEqualExceptionMessageBuilder(
-                    context, CreateTestingComparisonBuilder().GetFormatterFactory()
+                    context, ComparisonBuilder.Get().GetFormatterFactory()
                 ).GetMessage(), context);
         }
 
@@ -120,7 +125,7 @@ List did not contain these expected elements:
 
         public class DeepEqualComparer<T> : IEqualityComparer<T>
         {
-            public bool Equals(T x, T y) => x.IsDeepEqual(y, CreateTestingComparisonBuilder().Create());
+            public bool Equals(T x, T y) => x.IsDeepEqual(y, CreateTestingComparison());
             public int GetHashCode(T obj) => obj.GetHashCode();
         }
     }

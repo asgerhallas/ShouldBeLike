@@ -6,36 +6,25 @@ namespace ShouldBeLike.Tests
     public class CyclesComparisonTests
     {
         [Fact]
-        public void Cycles()
-        {
-            new SelfCycling().ShouldBeLike(new SelfCycling());
-        }
+        public void Cycles() => new SelfCycling().ShouldBeLike(new SelfCycling());
 
         [Fact]
-        public void Cycles_Null()
-        {
+        public void Cycles_Null() =>
             Assert.Throws<DeepEqualException>(() =>
                 new SelfCycling().ShouldBeLike(new SelfCycling {Self = null}));
-        }
 
         [Fact]
-        public void Cycles_OtherParent()
-        {
-            new SelfCycling().ShouldBeLike(new SelfCycling {Self = new SelfCycling()});
-        }
+        public void Cycles_OtherParent() =>
+            Assert.Throws<DeepEqualException>(() =>
+                new SelfCycling().ShouldBeLike(new SelfCycling {Self = new SelfCycling()}));
 
         [Fact]
-        public void Cycles_OtherObject()
-        {
+        public void Cycles_OtherObject() =>
             Assert.Throws<DeepEqualException>(() =>
                 new SelfCycling().ShouldBeLike(new SelfCycling {Self = new object()}));
-        }
 
         [Fact]
-        public void Cycles_Tuples()
-        {
-            (1, "hello", 2m, new SelfCycling()).ShouldBeLike((1, "hello", 2m, new SelfCycling()));
-        }
+        public void Cycles_Tuples() => (1, "hello", 2m, new SelfCycling()).ShouldBeLike((1, "hello", 2m, new SelfCycling()));
 
         [Fact]
         public void Cycles_Multiple()
