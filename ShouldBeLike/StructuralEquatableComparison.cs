@@ -17,7 +17,7 @@ namespace ShouldBeLike
 
             ((IStructuralEquatable) value1).Equals(value2, comparer);
 
-            return (comparer.Results.Concat(new[] {ComparisonResult.Inconclusive}).Max(), context);
+            return (comparer.Results.Concat([ComparisonResult.Inconclusive]).Max(), context);
         }
 
         class Comparer(IComparison comparison, IComparisonContext context) : IEqualityComparer
@@ -28,8 +28,7 @@ namespace ShouldBeLike
 
             bool IEqualityComparer.Equals(object x, object y)
             {
-                var result = comparison.Compare(context, x, y);
-                results.Add(result.result);
+                results.Add(comparison.Compare(context, x, y).result);
 
                 // Objects without properties is compared to inconclusive by default by DeepEqual library, for testing Inconclusive means pass.
                 // Equals cannot return Inconclusive, so this comparer would always either pass or fail and not continue to the next comparer for
