@@ -32,9 +32,9 @@ namespace ShouldBeLike
                 .GetProperty("AllComparisons", BindingFlags.NonPublic | BindingFlags.Instance)
                 .GetValue(builder);
 
+            builder.WithCustomComparison(new FailOnInconclusiveComparison(allComparisons));
             builder.WithCustomComparison(new FailOnDifferentTypes());
             //Builder.WithCustomComparison(new CyclesComparison(allComparisons));
-            builder.WithCustomComparison(new FailOnInconclusiveComparison(allComparisons));
             builder.WithCustomComparison(new StructuralEquatableComparison(allComparisons));
             builder.WithCustomComparison(new EmptyComplexObjectComparison(builder.ComplexObjectComparison));
 

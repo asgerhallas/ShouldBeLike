@@ -16,7 +16,11 @@ namespace ShouldBeLike
 
             if (result != ComparisonResult.Inconclusive) return (result, comparisonContext);
 
-            if (value1.GetType() != value2.GetType()) return (ComparisonResult.Fail, context);
+            if (value1.GetType() != value2.GetType())
+            {
+                return (ComparisonResult.Fail, comparisonContext.AddDifference(
+                    new BasicDifference(context.Breadcrumb, value1.GetType(), value2.GetType(), "Comparison came up inconclusive.")));
+            }
 
             throw new InvalidOperationException("Comparison came up inconclusive.");
         }
