@@ -1,3 +1,4 @@
+using DeepEqual;
 using DeepEqual.Syntax;
 using Xunit;
 

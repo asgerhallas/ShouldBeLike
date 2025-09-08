@@ -40,8 +40,6 @@ namespace ShouldBeLike
 
         public static void ShouldBeLike<T>(this T actual, T expected) => actual.ShouldBeLike(expected, CreateTestingComparison());
 
-        public static void ShouldBeLike<T>(this IEnumerable<T> actual, params T[] expected) => ShouldBeLike(actual, expected.AsEnumerable());
-
         public static void ShouldBeLike<T>(this T actual, T expected, IComparison comparison)
         {
             var (comparisonResult, context) = comparison.Compare(new ComparisonContext(), actual, expected);

@@ -60,6 +60,16 @@ namespace ShouldBeLike.Tests
         public void SameProperties_DifferentTypes_Arrays() => 
             new BlahRecord2(new[] { 1 }).ShouldBeLike<object>(new BlahRecord2(new List<int> { 1 }));
 
+        [Fact]
+        public void SameProperties_DifferentTypes_Arrays_DifferentValues() =>
+            Assert.Throws<DeepEqualException>(() =>
+                new[] { 1 }.ShouldBeLike<object>(new List<string> { "1" }));
+
+        [Fact]
+        public void SameProperties_DifferentTypes_Lists_DifferentValues() =>
+            Assert.Throws<DeepEqualException>(() =>
+                new List<int>() { 2 }.ShouldBeLike([1]));
+
         public class Blah { }
         public class Blah2 
         {
@@ -97,13 +107,13 @@ namespace ShouldBeLike.Tests
             var abc = new[] { "a", "b", "c" };
             try
             {
-                abc.ShouldBeLike("b", "a", "c");
+                abc.ShouldBeLike(["b", "a", "c"]);
             }
             catch (Exception e)
             {
             }
 
-            Assert.Throws<DeepEqualException>(() => abc.ShouldBeLike("b", "a", "c"));
+            Assert.Throws<DeepEqualException>(() => abc.ShouldBeLike(["b", "a", "c"]));
         }
 
         public class Foo(int value)
